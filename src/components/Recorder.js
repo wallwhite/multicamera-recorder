@@ -13,6 +13,7 @@ const Recorder = ({ className = '' }) => {
     const screenRecorderRef = useRef();
     const cameraRecorderRef = useRef();
     const isAutoPlayRef = useRef(false);
+    const [recordedBlob, setRecordedBlob] = useState(null);
 
     const addStreamStopListener = (stream, callback) => {
         stream.addEventListener('ended', () => {
@@ -139,7 +140,7 @@ const Recorder = ({ className = '' }) => {
             cameraVideo.srcObject = null;
             cameraVideo.src = URL.createObjectURL(blob);
             cameraVideo.muted = false;
-
+            setRecordedBlob(blob);
 
             cameraStreamRef.current.getTracks().forEach((track) => {
                 track.stop();
@@ -207,6 +208,9 @@ const Recorder = ({ className = '' }) => {
                 <button onClick={handleStartRecording}>Start recording</button>
                 <button onClick={handleStopRecording} disabled={!isRecordingStarted || isRecordingFinished}>Stop recording</button>
                 <button onClick={togglePlayPreview} disabled={!isRecordingFinished}>{isPlaying ? 'Pause' : 'Play'}</button>
+                {recordedBlob && (
+                    <a href={`${URL.createObjectURL(recordedBlob)}`} download="filename.mp4">Download</a>
+                )}
             </div>
         </div>
     )
